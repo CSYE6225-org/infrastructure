@@ -1,55 +1,72 @@
-variable "vpc_cider_block" {
-  type        = string
-  description = "Cider Block"
-  // default     = "10.0.0.0/16"
-}
-
-variable "cidr_block" {
-  type = list(any)
-  // default = [
-  //   "10.0.0.0/16",
-  //   "10.0.1.0/24",
-  //   "10.0.2.0/24",
-  //   "10.0.3.0/24",
-  //   "10.0.4.0/24"
-  // ]
-
-}
-
-variable "az_subnet" {
-  type = list(any)
-}
-
-variable "vpc_region" {
-  type        = string
-  description = "region of VPC"
-}
+// GLOBAL VARS
 
 variable "aws_profile" {
   type        = string
-  description = "region of VPC"
+  description = "AWS account profile to create resources in"
 }
+
+variable "aws_region" {
+  type        = string
+  description = "AWS region to create resources in"
+}
+
+// VPC VARS
 
 variable "vpc_name" {
   type        = string
-  description = "Name of VPC"
+  description = "VPC resource name on AWS"
 }
 
-variable "enable_dns_support" {
+variable "vpc_cidr_block" {
+  type        = string
+  description = "VPC CIDR range"
+}
+
+variable "vpc_subnet_map" {
+  type        = map(string)
+  description = "mapping of subnet AZ to CIDR block"
+}
+
+variable "vpc_enable_classiclink_dns_support" {
+  type        = bool
+  description = "A boolean flag to enable/disable ClassicLink DNS Support for the VPC"
+}
+
+variable "vpc_enable_dns_hostnames" {
+  type        = bool
+  description = "A boolean flag to enable/disable DNS hostnames in the VPC"
+}
+
+// RDS VARS
+
+variable "rds_identifier" {
   type = string
 }
 
-variable "enable_dns_hostnames" {
+variable "rds_username" {
   type = string
 }
 
-variable "enable_classiclink_dns_support" {
-  type = string
-}
-variable "assign_generated_ipv6_cidr_block" {
+variable "rds_password" {
   type = string
 }
 
-variable "route_table_cidr_block" {
+// S3 VARS
+
+variable "s3_domain" {
+  type = string
+}
+
+variable "s3_name" {
+  type = string
+}
+
+// EC2 VARS 
+
+variable "ec2_ami_id" {
+  type = string
+}
+
+variable "ec2_ssh_key" {
   type = string
 }
