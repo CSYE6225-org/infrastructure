@@ -74,9 +74,11 @@ resource "aws_iam_policy" "policy" {
             ],
             "Effect": "Allow",
             "Resource": [
-                "arn:aws:s3:::${var.s3_bucket}",
-                "arn:aws:s3:::${var.s3_bucket}/*"
-            ]
+               "arn:aws:s3:::${var.s3_bucket}",
+                "arn:aws:s3:::${var.s3_bucket}/*",
+                "arn:aws:s3:::${var.code_deploy_bucket}",
+                "arn:aws:s3:::${var.code_deploy_bucket}/*"
+                            ]
         }
     ]
     }

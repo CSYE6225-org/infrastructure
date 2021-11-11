@@ -70,3 +70,7 @@ variable "ec2_ami_id" {
 variable "ec2_ssh_key" {
   type = string
 }
+
+variable "code_deploy_bucket" {
+  type = string
+}

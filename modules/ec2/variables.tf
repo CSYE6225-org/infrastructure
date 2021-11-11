@@ -18,6 +18,11 @@ variable "ssh_key" {
     description = "ssh public key to access the ec2 instance"
 }
 
+variable "code_deploy_bucket" {
+    type = string
+    description = "code deploy bucket"
+}
+
 variable "rds_identifier" {
   type        = string
   description = "Identifier for the RDS instance"
