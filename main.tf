@@ -36,6 +36,7 @@ module "ec2Module" {
   database_username  = var.rds_username
   database_password  = var.rds_password
   ami_id             = var.ec2_ami_id
+  aws_profile        = var.aws_profile
   ssh_key            = var.ec2_ssh_key
   code_deploy_bucket = var.code_deploy_bucket
   depends_on = [
