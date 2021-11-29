@@ -26,7 +26,7 @@ resource "aws_db_instance" "rdsDbInstance" {
   storage_type              = "gp2"
   allocated_storage = 20
   max_allocated_storage = 0
-  multi_az = false
+  multi_az = true
   name                      = "csye6225"
   engine                 = "postgres"
   engine_version         = "12.8"
@@ -36,4 +36,17 @@ resource "aws_db_instance" "rdsDbInstance" {
   vpc_security_group_ids = [var.security_group_id]
   parameter_group_name   = aws_db_parameter_group.rdsDbParamGp.name
   publicly_accessible    = false
+  backup_retention_period = 1
 }
+
+resource "aws_db_instance" "readRDS" {
+  identifier             = "replica"
+  replicate_source_db = aws_db_instance.rdsDbInstance.identifier
+  instance_class         = "db.t3.micro"
+  name                   = "csye6225-replica"
+  engine                 = "postgres"
+  engine_version         = "12.8"
+  publicly_accessible    = false
+  skip_final_snapshot = true
+}
+

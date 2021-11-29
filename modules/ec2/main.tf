@@ -11,13 +11,17 @@ data "aws_db_instance" "database" {
   db_instance_identifier = var.rds_identifier
 }
 
+data "aws_db_instance" "replica" {
+  db_instance_identifier = "replica"
+}
+
 data "template_file" "config_data" {
   template = <<-EOF
 		#! /bin/bash
         cd home/ubuntu
         mkdir server
         cd server
-        echo "{\"host\":\"${data.aws_db_instance.database.endpoint}\",\"username\":\"${var.database_username}\",\"password\":\"${var.database_password}\",\"database\":\"${var.rds_identifier}\",\"port\":3306,\"s3\":\"${var.s3_bucket}\"}" > config.json
+        echo "{\"host\":\"${data.aws_db_instance.database.endpoint}\",\"username\":\"${var.database_username}\",\"password\":\"${var.database_password}\",\"database\":\"${var.rds_identifier}\",\"port\":3306,\"s3\":\"${var.s3_bucket}\", \"replica\":\"${data.aws_db_instance.replica.endpoint}\"}" > config.json
         cd ..
         sudo chmod -R 777 server
     EOF
