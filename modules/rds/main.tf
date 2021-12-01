@@ -26,10 +26,11 @@ resource "aws_db_instance" "rdsDbInstance" {
   storage_type              = "gp2"
   allocated_storage = 20
   max_allocated_storage = 0
-  multi_az = true
+  multi_az = false
   name                      = "csye6225"
   engine                 = "postgres"
   engine_version         = "12.8"
+  availability_zone = "us-east-1a"
   username               = var.username
   password               = var.password
   db_subnet_group_name   = aws_db_subnet_group.rdsDbSubnetGp.name
@@ -47,6 +48,7 @@ resource "aws_db_instance" "readRDS" {
   engine                 = "postgres"
   engine_version         = "12.8"
   publicly_accessible    = false
+  availability_zone = "us-east-1b"
   skip_final_snapshot = true
 }
 

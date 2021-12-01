@@ -63,7 +63,7 @@ resource "aws_dynamodb_table" "mydbtable" {
 
     ttl {
         attribute_name = "TimeToExist"
-        enabled        = false
+        enabled        = true
     }
 
 }
