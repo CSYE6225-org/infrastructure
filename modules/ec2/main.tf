@@ -277,6 +277,75 @@ resource "aws_iam_policy" "policy" {
 
 }
 
+resource "aws_iam_policy" "Ec2DynamoDB"{
+  name = "Ec2-Dynamo"
+  description = "ec2 Permisson for DynamoDb"
+  policy = <<-EOF
+    {
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [      
+              "dynamodb:List*",
+              "dynamodb:DescribeReservedCapacity*",
+              "dynamodb:DescribeLimits",
+              "dynamodb:DescribeTimeToLive"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:BatchGet*",
+                "dynamodb:DescribeStream",
+                "dynamodb:DescribeTable",
+                "dynamodb:Get*",
+                "dynamodb:Query",
+                "dynamodb:Scan",
+                "dynamodb:BatchWrite*",
+                "dynamodb:CreateTable",
+                "dynamodb:Delete*",
+                "dynamodb:Update*",
+                "dynamodb:PutItem",
+                "dynamodb:GetItem"
+            ],
+            "Resource": "arn:aws:dynamodb:*:*:table/csye6225-dynamo"
+        }
+    ]
+    }
+    EOF
+  }
+
+resource "aws_iam_role_policy_attachment" "attachDynamoDbPolicyToRole" {
+  role       = aws_iam_role.ec2_s3_access_role.name
+  policy_arn = aws_iam_policy.Ec2DynamoDB.arn
+}
+
+resource "aws_iam_policy" "topic_policy_sns" {
+name        = "SNS"
+description = ""
+policy      = <<EOF
+{
+          "Version" : "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "AllowEC2ToPublishToSNSTopic",
+              "Effect": "Allow",
+              "Action": ["sns:Publish",
+              "sns:CreateTopic"],
+              "Resource": "arn:aws:sns:us-east-1:686302940114:EmailNotificationRecipeEndpoint"
+            }
+          ]
+        }
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "topic_policy_attach_role" {
+role       = "${aws_iam_role.ec2_s3_access_role.name}"
+policy_arn = "${aws_iam_policy.topic_policy_sns.arn}"
+}
+
 resource "aws_iam_role_policy_attachment" "test-attach" {
   role       = aws_iam_role.ec2_s3_access_role.name
   policy_arn = aws_iam_policy.policy.arn
