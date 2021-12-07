@@ -17,7 +17,7 @@ variable "vpc_name" {
   description = "VPC resource name on AWS"
 }
 
-variable "vpc_cidr_block" {
+variable "cidr_block" {
   type        = string
   description = "VPC CIDR range"
 }
@@ -27,12 +27,12 @@ variable "vpc_subnet_map" {
   description = "mapping of subnet AZ to CIDR block"
 }
 
-variable "vpc_enable_classiclink_dns_support" {
+variable "enable_classiclink_dns_support" {
   type        = bool
   description = "A boolean flag to enable/disable ClassicLink DNS Support for the VPC"
 }
 
-variable "vpc_enable_dns_hostnames" {
+variable "enable_dns_hostnames" {
   type        = bool
   description = "A boolean flag to enable/disable DNS hostnames in the VPC"
 }
