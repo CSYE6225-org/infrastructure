@@ -372,20 +372,21 @@ resource "aws_db_instance" "database" {
   publicly_accessible     = false
   backup_retention_period = 1
   storage_encrypted       = true
-//   kms_key_id              = aws_kms_key.mykey.arn
+  performance_insights_enabled = true
+  kms_key_id              = aws_kms_key.database_kms_key.arn
 }
 
-// resource "aws_db_instance" "read_replica" {
-//   identifier          = "replica"
-//   replicate_source_db = aws_db_instance.database.identifier
-//   instance_class      = "db.t3.micro"
-//   name                = "csye6225-replica"
-//   engine              = "postgres"
-//   engine_version      = "12.8"
-//   publicly_accessible = false
-//   availability_zone   = "us-east-1b"
-//   skip_final_snapshot = true
-// }
+resource "aws_db_instance" "read_replica" {
+  identifier          = "replica"
+  replicate_source_db = aws_db_instance.database.identifier
+  instance_class      = "db.t3.micro"
+  name                = "csye6225-replica"
+  engine              = "postgres"
+  engine_version      = "12.8"
+  publicly_accessible = false
+  availability_zone   = "us-east-1b"
+  skip_final_snapshot = true
+}
 
 data "aws_subnet_ids" "subnets" {
   depends_on = [aws_vpc.vpc_name, aws_subnet.subnet_aws]
@@ -472,7 +473,7 @@ resource "aws_launch_template" "launch_conf" {
       volume_type = "gp2"
       volume_size = 20
       encrypted   = true
-      kms_key_id            = aws_kms_key.ebsKey.arn
+      kms_key_id            = aws_kms_key.ebs_key.arn
       delete_on_termination = true
     }
   }
@@ -776,8 +777,61 @@ resource "aws_iam_role_policy_attachment" "cloud_watch_policy" {
   role       = aws_iam_role.ec2_role.name
 }
 
-resource "aws_kms_key" "ebsKey" {
-  description              = "EBSKey"
+resource "aws_kms_key" "ebs_key" {
+  description              = "ebs_key"
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Id": "key-default-1",
+    "Statement": [
+        {
+            "Sid": "Enable IAM User Permissions",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": [
+                    "arn:aws:iam::${var.account_id}:root",
+                    "arn:aws:iam::${var.account_id}:user/cli"
+                ]
+            },
+            "Action": "kms:*",
+            "Resource": "*"
+        },
+        {
+            "Sid": "Allow service-linked role use of the customer managed key",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::686302940114:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
+            },
+            "Action": [
+                "kms:Encrypt",
+                "kms:Decrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+                "kms:DescribeKey"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "Allow attachment of persistent resources",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::686302940114:role/aws-service-role/autoscaling.amazonaws.com/AWSServiceRoleForAutoScaling"
+            },
+            "Action": "kms:CreateGrant",
+            "Resource": "*",
+            "Condition": {
+                "Bool": {
+                    "kms:GrantIsForAWSResource": "true"
+                }
+            }
+        }
+    ]
+}
+EOF
+}
+
+resource "aws_kms_key" "database_kms_key" {
+  description              = "database_key"
   policy = <<EOF
 {
     "Version": "2012-10-17",
