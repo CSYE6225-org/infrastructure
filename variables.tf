@@ -22,6 +22,11 @@ variable "cidr_block" {
   description = "VPC CIDR range"
 }
 
+variable "account_id" {
+  type        = string
+  description = "VPC CIDR range"
+}
+
 variable "vpc_subnet_map" {
   type        = map(string)
   description = "mapping of subnet AZ to CIDR block"
